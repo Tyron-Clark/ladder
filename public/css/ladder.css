@@ -1,0 +1,66 @@
+h1 {
+  font-size: 2.5rem;
+}
+
+.ladder-controls,
+.bracket-region-buttons {
+  display: flex;
+}
+
+.ladder-controls {
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bracket-region-buttons {
+  gap: 50px;
+  padding-top: 0.938rem;
+}
+
+.bracket-buttons button:first-of-type,
+.region-buttons button:first-of-type {
+  margin-right: 8px;
+}
+
+.bracket-buttons button,
+.region-buttons button {
+  padding: 10px 20px;
+}
+
+.pagination-buttons {
+  padding-top: 10px;
+}
+
+.pagination-buttons button {
+  padding: 10px 20px;
+}
+
+.class-filters {
+  padding-top: 10px;
+}
+
+.class-filters button {
+  padding: 12px 17px;
+}
+
+@media (min-width: 768px) {
+  h1 {
+    text-align: start;
+    padding-left: 1.875rem;
+  }
+
+  .ladder-controls {
+    flex-direction: row;
+    padding: 0rem 1.875rem;
+  }
+
+  .class-filters {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .class-filters button {
+    padding: 0.875rem 1.125rem;
+  }
+}
