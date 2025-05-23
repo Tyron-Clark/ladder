@@ -15,39 +15,67 @@
   </head>
   <body>
     <h1>Classic Arena Index</h1>
+    <section id="ladderControls" class="ladder-controls">
+      <div id="bracketRegionButtons" class="bracket-region-buttons">
+        <div id="bracketButtons" class="bracket-buttons">
+          <button id="3v3Button">3v3</button>
+          <button id="2v2Button">2v2</button>
+        </div>
+        <div id="regionButtons" class="region-buttons">
+          <button id="naButton">NA</button>
+          <button id="euButton">EU</button>
+        </div>
+      </div>
+      <div id="paginationButtons" class="pagination-buttons">
+        <button id="paginationFirst"><<</button>
+        <button id="paginationPrev"><</button>
+        <button id="paginationNext">></button>
+        <button id="paginationLast">>></button>
+      </div>
+
+      <div id="classFilters" class="class-filters">
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+        <button>?</button>
+      </div>
+    </section>
     <main>
-      <section class="ladder-controls">
-        <div class="bracket-region-buttons">
-          <div class="bracket-buttons">
-            <button id="2v2Button">2v2</button>
-            <button id="3v3Button">3v3</button>
-          </div>
-          <div class="region-buttons">
-            <button id="naButton">NA</button>
-            <button id="euButton">EU</button>
-          </div>
-        </div>
-
-        <div class="pagination-buttons">
-          <button id="paginationFirst"><<</button>
-          <button id="paginationPrev"><</button>
-          <button id="paginationNext">></button>
-          <button id="paginationLast">>></button>
-        </div>
-
-        <div class="class-filters">
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-          <button>?</button>
-        </div>
-      </section>
+      <table>
+        <tr>
+          <th>Rank</th>
+          <th>Player</th>
+          <th>Rating</th>
+          <th>Class</th>
+          <th>Server</th>
+          <th>W/L</th>
+          <th>Win%</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Vdxheavy</td>
+          <td>3000</td>
+          <td>Balance Druid</td>
+          <td>Benediction</td>
+          <td>200-700</td>
+          <td>99%</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Bertmilly</td>
+          <td>1300</td>
+          <td>Marksmanship Hunter</td>
+          <td>Benediction</td>
+          <td>900-2</td>
+          <td>40%</td>
+        </tr>
+      </table>
     </main>
   </body>
 </html>
