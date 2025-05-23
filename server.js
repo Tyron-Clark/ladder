@@ -14,6 +14,7 @@ app.listen(PORT, () => {
 
 app.use(express.static(path.join(__dirname, "public")));
 
+///// Routes /////
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
