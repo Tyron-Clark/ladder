@@ -28,7 +28,7 @@ export default async function getAccessToken() {
       console.error(response.status);
     }
     const data = await response.json();
-    console.log(data.access_token);
+    return data.access_token;
   } catch (error) {
     console.error(`Error fetching access token: ${error.message}`);
     throw error;
