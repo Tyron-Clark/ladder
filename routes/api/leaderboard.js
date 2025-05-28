@@ -4,39 +4,6 @@ import getAccessToken from "../../config/blizzardAPI.js";
 
 const router = express.Router();
 
-const processLeaderboardData = (data, queryParams) => {
-  const page = parseInt(queryParams.page) || 1;
-  const limit = parseInt(queryParams.limit) || 50;
-  const search = queryParams.search || "";
-
-  let entries = data.entries || [];
-
-  const totalEntries = entries.length;
-  const totalPages = Math.ceil(totalEntries / limit); // Round up to handle partial pages
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
-
-  //Extract just the slice of data the user wants to see
-  const paginatedEntries = entries.slice(startIndex, endIndex);
-
-  return {
-    entries: paginatedEntries,
-    pagination: {
-      currentPage: page,
-      totalPages: totalPages,
-      totalEntries: totalEntries,
-      entriesPerPage: limit,
-      hasNextPage: page < totalPages,
-      hasPreviousPage: page > 1,
-    },
-    metadata: {
-      lastUpdated: new Date().toISOString(),
-      searchTerm: search || null,
-      dataSource: "blizzard-api",
-    },
-  };
-};
-
 let leaderboardCache = {
   data: null,
   lastFetched: null,
@@ -65,9 +32,9 @@ router.get("/leaderboard", async (req, res) => {
 
     // Fetch fresh data
     console.log("Fetching fresh leaderboard data...");
-    const season = req.query.season || 11;
-    const bracket = req.query.bracket || "2v2";
-    const region = req.query.region || "us";
+    const season = req.query.season;
+    const bracket = req.query.bracket;
+    const region = req.query.region;
 
     const accessToken = await getAccessToken();
     const params = new URLSearchParams({
