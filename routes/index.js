@@ -1,8 +1,8 @@
 import express from "express";
-import leaderboardRoutes from "./leaderboard.js";
+import leaderboardEntries from "./leaderboard.js";
 
 const router = express.Router();
 
-router.use("/", leaderboardRoutes);
+router.use("/", leaderboardEntries);
 
 export default router;
