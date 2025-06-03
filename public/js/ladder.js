@@ -1,32 +1,32 @@
-$(document).ready(function () {
+$(function () {
   fetchLeaderboardData();
   ///// Pagination Buttons /////
-  $(
-    "#paginationNext, #paginationPrev, #paginationFirst, #paginationLast "
-  ).click(function () {
-    const button = this.id;
-    let page = ladderState.currentPage;
+  $("#paginationNext, #paginationPrev, #paginationFirst, #paginationLast ").on(
+    "click",
+    function () {
+      const button = this.id;
+      let page = ladderState.currentPage;
 
-    switch (button) {
-      case "paginationNext":
-        page = ladderState.currentPage + 1;
-        break;
-      case "paginationPrev":
-        page = Math.max(1, ladderState.currentPage - 1);
-        break;
-      case "paginationFirst":
-        page = 1;
-        break;
-      case "paginationLast":
-        page = ladderState.totalPages;
-        break;
-    }
+      switch (button) {
+        case "paginationNext":
+          page = ladderState.currentPage + 1;
+          break;
+        case "paginationPrev":
+          page = Math.max(1, ladderState.currentPage - 1);
+          break;
+        case "paginationFirst":
+          page = 1;
+          break;
+        case "paginationLast":
+          page = ladderState.totalPages;
+          break;
+      }
 
-    if (page !== ladderState.currentPage) {
-      fetchLeaderboardData({ currentPage: page });
-      console.log(ladderState.currentPage);
+      if (page !== ladderState.currentPage) {
+        fetchLeaderboardData({ currentPage: page });
+      }
     }
-  });
+  );
 });
 
 ///// Ladder Data /////
