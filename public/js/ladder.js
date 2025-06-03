@@ -1,5 +1,32 @@
 $(document).ready(function () {
   fetchLeaderboardData();
+  ///// Pagination Buttons /////
+  $(
+    "#paginationNext, #paginationPrev, #paginationFirst, #paginationLast "
+  ).click(function () {
+    const button = this.id;
+    let page = ladderState.currentPage;
+
+    switch (button) {
+      case "paginationNext":
+        page = ladderState.currentPage + 1;
+        break;
+      case "paginationPrev":
+        page = Math.max(1, ladderState.currentPage - 1);
+        break;
+      case "paginationFirst":
+        page = 1;
+        break;
+      case "paginationLast":
+        page = ladderState.totalPages;
+        break;
+    }
+
+    if (page !== ladderState.currentPage) {
+      fetchLeaderboardData({ currentPage: page });
+      console.log(ladderState.currentPage);
+    }
+  });
 });
 
 ///// Ladder Data /////
@@ -8,8 +35,10 @@ let ladderState = {
   season: 11,
   bracket: "2v2",
   region: "us",
+  currentPage: 1,
+  totalPages: 1,
 };
-
+console.log(ladderState);
 const formatSlugName = (slug) => {
   return slug
     .split("-")
@@ -24,9 +53,15 @@ const fetchLeaderboardData = (options = {}) => {
     season: ladderState.season,
     bracket: ladderState.bracket,
     region: ladderState.region,
+    page: ladderState.currentPage,
   })
     .done(function (response) {
       const entries = response.entries || [];
+      const pagination = response.pagination;
+
+      if (pagination && pagination.totalPages) {
+        ladderState.totalPages = pagination.totalPages;
+      }
 
       const tbody = $("#ladderBody");
       tbody.empty();
@@ -62,7 +97,7 @@ const fetchLeaderboardData = (options = {}) => {
         `Loaded ${
           ladderState.bracket
         } leaderboard for ${ladderState.region.toUpperCase()} server:`,
-        entries
+        response
       );
     })
     .fail(function (xhr, status, error) {

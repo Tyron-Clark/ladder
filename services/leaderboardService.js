@@ -21,7 +21,6 @@ export const fetchLeaderboardData = async (params) => {
     namespace: `dynamic-classic-${region}`,
     locale: "en_US",
   });
-
   const url = `https://${region}.api.blizzard.com/data/wow/pvp-season/${season}/pvp-leaderboard/${bracket}?${urlParams}`;
 
   const response = await fetch(url, {
