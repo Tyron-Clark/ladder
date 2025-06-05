@@ -51,7 +51,7 @@ const formatSlugName = (slug) => {
 const fetchLeaderboardData = (options = {}) => {
   ladderState = { ...ladderState, ...options };
 
-  $.get("/api/leaderboard", {
+  $.get("https://ladder-huna.onrender.com/api/leaderboard", {
     season: ladderState.season,
     bracket: ladderState.bracket,
     region: ladderState.region,
