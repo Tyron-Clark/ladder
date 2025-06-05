@@ -3,7 +3,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { errorHandler } from "./middleware/errorHandler.js";
-import routes from "./routes/leaderboard.js";
+import routes from "./routes/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
