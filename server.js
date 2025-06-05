@@ -1,3 +1,4 @@
+import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import path from "path";
@@ -11,6 +12,17 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 ///// Middleware /////
+
+app.use(
+  cors({
+    origin: [
+      `https://tyron-clark.github.io`,
+      `http://localhost:3000`,
+      "http://localhost:5000",
+    ],
+  })
+);
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use("/api", routes);
