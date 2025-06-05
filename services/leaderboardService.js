@@ -1,5 +1,6 @@
 import { URLSearchParams } from "url";
 import getAccessToken from "../config/blizzardAPI.js";
+import { enrichLeaderboardWithPlayerInfo } from "./batchPlayerInfoService.js";
 import cacheService from "./cacheService.js";
 
 export const fetchLeaderboardData = async (params) => {
@@ -37,8 +38,12 @@ export const fetchLeaderboardData = async (params) => {
 
   const data = await response.json();
 
-  // Cache data
-  cacheService.set(cacheKey, data);
+  // Enrich the leaderboard data with player info
+  console.log("Enriching leaderboard data with player info...");
+  const enrichedData = await enrichLeaderboardWithPlayerInfo(data, region);
 
-  return data;
+  // Cache enriched data
+  cacheService.set(cacheKey, enrichedData);
+
+  return enrichedData;
 };

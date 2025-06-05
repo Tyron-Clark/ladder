@@ -2,6 +2,8 @@ class CacheService {
   constructor() {
     this.cache = new Map();
     this.defaultTTL = 15 * 60 * 1000; // 15 minutes
+    this.playerTTL = 60 * 60 * 1000; // 1 hour for player data
+    this.leaderboardTTL = 15 * 60 * 1000; // 15 minutes for leaderboard data
   }
 
   set(key, data, ttl = this.defaultTTL) {
@@ -30,6 +32,11 @@ class CacheService {
   }
 
   generateKey(params) {
+    if (params.characterName) {
+      return `player:${params.region}:${
+        params.realmSlug
+      }:${params.characterName.toLowerCase()}`;
+    }
     return `leaderboard:${params.region}:${params.season}:${params.bracket}`;
   }
 }

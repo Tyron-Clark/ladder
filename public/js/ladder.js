@@ -81,6 +81,22 @@ const fetchLeaderboardData = (options = {}) => {
         const player = entry.character;
         const stats = entry.season_match_statistics;
         const winloss = `${stats.won} - ${stats.lost}`;
+        const playerInfo = entry.playerInfo || {};
+
+        // Create a detailed console log for each player
+        console.log(`Player ${player.name}-${player.realm.slug}:`, {
+          leaderboard: {
+            rank: entry.rank,
+            rating: entry.rating,
+            winLoss: winloss,
+          },
+          playerInfo: {
+            averageItemLevel: playerInfo.average_item_level,
+            equippedItemLevel: playerInfo.equipped_item_level,
+            lastLogin: new Date(playerInfo.last_login_timestamp),
+            specializations: playerInfo.specializations,
+          },
+        });
 
         const row = `
           <tr class="playerRows">
@@ -99,7 +115,12 @@ const fetchLeaderboardData = (options = {}) => {
         `Loaded ${
           ladderState.bracket
         } leaderboard for ${ladderState.region.toUpperCase()} server:`,
-        response
+        {
+          totalEntries: entries.length,
+          currentPage: ladderState.currentPage,
+          totalPages: ladderState.totalPages,
+          fullData: response,
+        }
       );
     })
     .fail(function (xhr, status, error) {
