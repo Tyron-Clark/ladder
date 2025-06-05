@@ -1,11 +1,17 @@
 import { URLSearchParams } from "url";
 import getAccessToken from "../config/blizzardAPI.js";
+import cacheService from "./cacheService.js";
 
-export const fetchPlayerInfo = async (
-  currentRegion = "us",
-  realmSlug = "benediction",
-  characterName = "Vdxheavy"
-) => {
+export const fetchPlayerInfo = async (params) => {
+  const { currentRegion, realmSlug, characterName } = params;
+  const playerCacheKey = `player:${currentRegion}:${realmSlug}:${characterName.toLowerCase()}`;
+
+  const cachedPlayerData = cacheService.get(playerCacheKey);
+  if (cachedPlayerData) {
+    console.log(`Serving cached player data for ${characterName}`);
+    return cachedPlayerData;
+  }
+
   try {
     const accessToken = await getAccessToken();
     const urlParams = new URLSearchParams({
@@ -26,7 +32,10 @@ export const fetchPlayerInfo = async (
       );
     }
     const data = await response.json();
-    console.log(data);
+
+    cacheService.set(playerCacheKey, data, 30 * 60 * 1000);
+
+    console.log(`Success fetching player info for ${characterName}`);
     return data;
   } catch (error) {
     console.error(error);

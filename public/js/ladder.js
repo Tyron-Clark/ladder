@@ -1,3 +1,5 @@
+// TODO: Pagination hasNextPage, hasPrevPage button diables
+
 $(function () {
   fetchLeaderboardData();
   ///// Pagination Buttons /////
