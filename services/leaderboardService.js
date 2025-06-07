@@ -1,10 +1,9 @@
 import { URLSearchParams } from "url";
 import getAccessToken from "../config/blizzardAPI.js";
-import { enrichLeaderboardWithPlayerInfo } from "./batchPlayerInfoService.js";
 import cacheService from "./cacheService.js";
 
 export const fetchLeaderboardData = async (params) => {
-  const { season, bracket, region } = params; // destructure params
+  const { season, bracket, region } = params;
   const cacheKey = cacheService.generateKey(params);
 
   // Check if cached data
@@ -13,37 +12,35 @@ export const fetchLeaderboardData = async (params) => {
     console.log("Serving cached leaderboard data...");
     return cachedData;
   }
+  try {
+    const accessToken = await getAccessToken();
+    const urlParams = new URLSearchParams({
+      namespace: `dynamic-classic-${region}`,
+      locale: "en_US",
+    });
 
-  // Fetch fresh data
-  console.log("Fetching fresh leaderboard data...");
+    const url = `https://${region}.api.blizzard.com/data/wow/pvp-season/${season}/pvp-leaderboard/${bracket}?${urlParams}`;
 
-  const accessToken = await getAccessToken();
-  const urlParams = new URLSearchParams({
-    namespace: `dynamic-classic-${region}`,
-    locale: "en_US",
-  });
-  const url = `https://${region}.api.blizzard.com/data/wow/pvp-season/${season}/pvp-leaderboard/${bracket}?${urlParams}`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+    if (!response.ok) {
+      throw new Error(
+        `Blizzard API error: ${response.status} ${response.statusText}`
+      );
+    }
 
-  if (!response.ok) {
-    throw new Error(
-      `Blizzard API error: ${response.status} ${response.statusText}`
-    );
+    const data = await response.json();
+
+    // Cache data with leaderboardTTL
+    cacheService.set(cacheKey, data, cacheService.leaderboardTTL);
+
+    return data;
+  } catch (error) {
+    console.error(`Error fetching leaderboard data: ${error.message}`);
+    throw error;
   }
-
-  const data = await response.json();
-
-  // Enrich the leaderboard data with player info
-  console.log("Enriching leaderboard data with player info...");
-  const enrichedData = await enrichLeaderboardWithPlayerInfo(data, region);
-
-  // Cache enriched data
-  cacheService.set(cacheKey, enrichedData);
-
-  return enrichedData;
 };

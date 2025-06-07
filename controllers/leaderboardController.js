@@ -10,7 +10,7 @@ export const getLeaderboard = async (req, res, next) => {
     };
 
     const rawData = await fetchLeaderboardData(params);
-    const processedData = processLeaderboardData(rawData, req.query);
+    const processedData = await processLeaderboardData(rawData, req.query);
 
     res.json(processedData);
   } catch (error) {

@@ -1,4 +1,6 @@
-export const processLeaderboardData = (data, queryParams) => {
+import { fetchPlayerInfo } from "../services/playerInfoService.js";
+
+export const processLeaderboardData = async (data, queryParams) => {
   const page = parseInt(queryParams.page) || 1;
   const limit = parseInt(queryParams.limit) || 100;
   const search = queryParams.search || "";
@@ -7,17 +9,43 @@ export const processLeaderboardData = (data, queryParams) => {
   const season = queryParams.season || 11;
 
   let entries = data.entries || [];
-
   const totalEntries = entries.length;
-  const totalPages = Math.ceil(totalEntries / limit); // Round up to handle partial pages
+  const totalPages = Math.ceil(totalEntries / limit);
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
 
-  //Extract just the slice of data the user wants to see
+  // First paginate the entries
   const paginatedEntries = entries.slice(startIndex, endIndex);
 
+  // Then fetch player info only for the paginated entries
+  const enrichedEntries = await Promise.all(
+    paginatedEntries.map(async (entry) => {
+      try {
+        const playerInfo = await fetchPlayerInfo({
+          region: region,
+          realm: entry.character.realm.slug,
+          characterName: entry.character.name,
+        });
+
+        return {
+          ...entry,
+          character: {
+            ...entry.character,
+            class: playerInfo.character_class.name,
+          },
+        };
+      } catch (error) {
+        console.error(
+          `Error fetching player info for ${entry.character.name}:`,
+          error
+        );
+        return entry;
+      }
+    })
+  );
+
   return {
-    entries: paginatedEntries,
+    entries: enrichedEntries,
     pagination: {
       currentPage: page,
       totalPages: totalPages,

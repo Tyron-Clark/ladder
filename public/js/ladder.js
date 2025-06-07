@@ -31,6 +31,12 @@ $(function () {
   );
 });
 
+const API_BASE_URL =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1"
+    ? "/" // Local development
+    : "https://ladder-huna.onrender.com/"; // Production
+
 ///// Ladder Data /////
 
 let ladderState = {
@@ -40,7 +46,7 @@ let ladderState = {
   currentPage: 1,
   totalPages: 1,
 };
-console.log(ladderState);
+
 const formatSlugName = (slug) => {
   return slug
     .split("-")
@@ -51,7 +57,7 @@ const formatSlugName = (slug) => {
 const fetchLeaderboardData = (options = {}) => {
   ladderState = { ...ladderState, ...options };
 
-  $.get("https://ladder-huna.onrender.com/api/leaderboard", {
+  $.get(`${API_BASE_URL}api/leaderboard`, {
     season: ladderState.season,
     bracket: ladderState.bracket,
     region: ladderState.region,
@@ -82,28 +88,16 @@ const fetchLeaderboardData = (options = {}) => {
         const stats = entry.season_match_statistics;
         const winloss = `${stats.won} - ${stats.lost}`;
         const playerInfo = entry.playerInfo || {};
-
-        // Create a detailed console log for each player
-        console.log(`Player ${player.name}-${player.realm.slug}:`, {
-          leaderboard: {
-            rank: entry.rank,
-            rating: entry.rating,
-            winLoss: winloss,
-          },
-          playerInfo: {
-            averageItemLevel: playerInfo.average_item_level,
-            equippedItemLevel: playerInfo.equipped_item_level,
-            lastLogin: new Date(playerInfo.last_login_timestamp),
-            specializations: playerInfo.specializations,
-          },
-        });
+        const characterClass = player.character_class
+          ? player.character_class.name
+          : "Unknown";
 
         const row = `
           <tr class="playerRows">
             <td>${entry.rank}</td>
             <td>${player.name}</td>
             <td>${entry.rating}</td>
-            <td>${player.spec} ${player.class}</td>
+            <td>${characterClass}</td>
             <td>${formatSlugName(player.realm.slug)}</td>
             <td>${winloss}</td>
           </tr>`;
@@ -115,12 +109,7 @@ const fetchLeaderboardData = (options = {}) => {
         `Loaded ${
           ladderState.bracket
         } leaderboard for ${ladderState.region.toUpperCase()} server:`,
-        {
-          totalEntries: entries.length,
-          currentPage: ladderState.currentPage,
-          totalPages: ladderState.totalPages,
-          fullData: response,
-        }
+        response
       );
     })
     .fail(function (xhr, status, error) {

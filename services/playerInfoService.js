@@ -3,10 +3,11 @@ import getAccessToken from "../config/blizzardAPI.js";
 import cacheService from "./cacheService.js";
 
 export const fetchPlayerInfo = async (params) => {
-  const { currentRegion, realmSlug, characterName } = params;
-  const playerCacheKey = `player:${currentRegion}:${realmSlug}:${characterName.toLowerCase()}`;
+  const { region, realm, characterName } = params;
+  const cacheKey = cacheService.generateKey(params);
 
-  const cachedPlayerData = cacheService.get(playerCacheKey);
+  // Check if cached data
+  const cachedPlayerData = cacheService.get(cacheKey);
   if (cachedPlayerData) {
     console.log(`Serving cached player data for ${characterName}`);
     return cachedPlayerData;
@@ -15,10 +16,10 @@ export const fetchPlayerInfo = async (params) => {
   try {
     const accessToken = await getAccessToken();
     const urlParams = new URLSearchParams({
-      namespace: `profile-classic-${currentRegion}`,
+      namespace: `profile-classic-${region}`,
       locale: "en_US",
     });
-    const url = `https://${currentRegion}.api.blizzard.com/profile/wow/character/${realmSlug}/${characterName.toLocaleLowerCase()}?${urlParams}`;
+    const url = `https://${region}.api.blizzard.com/profile/wow/character/${realm}/${characterName.toLocaleLowerCase()}?${urlParams}`;
 
     const response = await fetch(url, {
       headers: {
@@ -33,11 +34,12 @@ export const fetchPlayerInfo = async (params) => {
     }
     const data = await response.json();
 
-    cacheService.set(playerCacheKey, data, 30 * 60 * 1000);
+    // Cache data with playerTTL
+    cacheService.set(cacheKey, data, cacheService.playerTTL);
 
-    console.log(`Success fetching player info for ${characterName}`);
     return data;
   } catch (error) {
-    console.error(error);
+    console.error(`Error fetching player info: ${error.message}`);
+    throw error;
   }
 };

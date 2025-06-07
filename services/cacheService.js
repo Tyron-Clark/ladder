@@ -2,7 +2,7 @@ class CacheService {
   constructor() {
     this.cache = new Map();
     this.defaultTTL = 15 * 60 * 1000; // 15 minutes
-    this.playerTTL = 60 * 60 * 1000; // 1 hour for player data
+    this.playerTTL = 23 * 60 * 60 * 1000; // 23 hours for player data
     this.leaderboardTTL = 15 * 60 * 1000; // 15 minutes for leaderboard data
   }
 

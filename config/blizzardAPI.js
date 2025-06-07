@@ -1,7 +1,17 @@
 import "dotenv/config";
 import { URLSearchParams } from "url";
+import cacheService from "../services/cacheService.js";
+
+const ACCESS_TOKEN_CACHE_KEY = "blizzard_access_token";
+const ACCESS_TOKEN_TTL = 23 * 60 * 60 * 1000; // 23 hours in milliseconds
 
 export default async function getAccessToken() {
+  // Check cache
+  const cachedToken = cacheService.get(ACCESS_TOKEN_CACHE_KEY);
+  if (cachedToken) {
+    return cachedToken;
+  }
+
   const clientId = process.env.CLIENT_ID;
   const clientSecret = process.env.CLIENT_SECRET;
   const url = "https://oauth.battle.net/token";
@@ -28,6 +38,14 @@ export default async function getAccessToken() {
       console.error(response.status);
     }
     const data = await response.json();
+
+    // Cache token
+    cacheService.set(
+      ACCESS_TOKEN_CACHE_KEY,
+      data.access_token,
+      ACCESS_TOKEN_TTL
+    );
+
     return data.access_token;
   } catch (error) {
     console.error(`Error fetching access token: ${error.message}`);
