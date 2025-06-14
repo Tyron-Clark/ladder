@@ -1,4 +1,5 @@
 import { fetchPlayerInfo } from "../services/playerInfoService.js";
+import { fetchPlayerSpecializations } from "../services/playerSpecializationService.js";
 
 export const processLeaderboardData = async (data, queryParams) => {
   const page = parseInt(queryParams.page) || 1;
@@ -27,11 +28,23 @@ export const processLeaderboardData = async (data, queryParams) => {
           characterName: entry.character.name,
         });
 
+        const playerSpecialization = await fetchPlayerSpecializations({
+          region: region,
+          realm: entry.character.realm.slug,
+          characterName: entry.character.name,
+        });
+
         return {
           ...entry,
           character: {
             ...entry.character,
             class: playerInfo.character_class.name,
+            race: playerInfo.race.name,
+            specializations: playerSpecialization || [],
+          },
+          links: {
+            equipment: playerInfo.equipment.href,
+            media: playerInfo.media.href,
           },
         };
       } catch (error) {

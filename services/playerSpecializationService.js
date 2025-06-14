@@ -2,14 +2,14 @@ import { URLSearchParams } from "url";
 import getAccessToken from "../config/blizzardAPI.js";
 import cacheService from "./cacheService.js";
 
-export const fetchPlayerInfo = async (params) => {
+export const fetchPlayerSpecializations = async (params) => {
   const { region, realm, characterName } = params;
   const cacheKey = cacheService.generateKey(params);
 
   // Check if cached data
-  const cachedPlayerData = cacheService.get(cacheKey);
-  if (cachedPlayerData) {
-    return cachedPlayerData;
+  const cachedSpecializations = cacheService.get(cacheKey);
+  if (cachedSpecializations) {
+    return cachedSpecializations;
   }
 
   try {
@@ -18,7 +18,7 @@ export const fetchPlayerInfo = async (params) => {
       namespace: `profile-classic-${region}`,
       locale: "en_US",
     });
-    const url = `https://${region}.api.blizzard.com/profile/wow/character/${realm}/${characterName.toLocaleLowerCase()}?${urlParams}`;
+    const url = `https://${region}.api.blizzard.com/profile/wow/character/${realm}/${characterName.toLocaleLowerCase()}/specializations?${urlParams}`;
 
     const response = await fetch(url, {
       headers: {
@@ -33,12 +33,18 @@ export const fetchPlayerInfo = async (params) => {
     }
     const data = await response.json();
 
-    // Cache data with playerTTL
+    // // Find the active specialization group and get its specialization names
+    // const activeGroup = data.specialization_groups?.find(
+    //   (group) => group.is_active === true
+    // );
+    // const activeSpecs =
+    //   activeGroup?.specializations?.specialization_name || null;
+
     cacheService.set(cacheKey, data, cacheService.playerTTL);
 
     return data;
   } catch (error) {
-    console.error(`Error fetching player info: ${error.message}`);
+    console.error(`Error fetching player specializations: ${error.message}`);
     throw error;
   }
 };

@@ -57,6 +57,10 @@ const formatSlugName = (slug) => {
 const fetchLeaderboardData = (options = {}) => {
   ladderState = { ...ladderState, ...options };
 
+  // Show loading indicator
+  $("#loadingIndicator").show();
+  $("#ladderTable").hide();
+
   $.get(`${API_BASE_URL}api/leaderboard`, {
     season: ladderState.season,
     bracket: ladderState.bracket,
@@ -87,17 +91,14 @@ const fetchLeaderboardData = (options = {}) => {
         const player = entry.character;
         const stats = entry.season_match_statistics;
         const winloss = `${stats.won} - ${stats.lost}`;
-        const playerInfo = entry.playerInfo || {};
-        const characterClass = player.character_class
-          ? player.character_class.name
-          : "Unknown";
+        const playerClass = player.class;
 
         const row = `
           <tr class="playerRows">
             <td>${entry.rank}</td>
             <td>${player.name}</td>
             <td>${entry.rating}</td>
-            <td>${characterClass}</td>
+            <td>${playerClass}</td>
             <td>${formatSlugName(player.realm.slug)}</td>
             <td>${winloss}</td>
           </tr>`;
@@ -117,6 +118,11 @@ const fetchLeaderboardData = (options = {}) => {
       $("#ladderBody").html(
         `<tr><td colspan="6">Failed to load leaderboard data.</td></tr>`
       );
+    })
+    .always(function () {
+      // Hide loading indicator and show table
+      $("#loadingIndicator").hide();
+      $("#ladderTable").show();
     });
 };
 
